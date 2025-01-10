@@ -33,6 +33,94 @@
             </form>
         </div>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        // Обработка переключения между формами
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    if (btn.dataset.tab === 'login') {
+                        loginForm.classList.remove('hidden');
+                        registerForm.classList.add('hidden');
+                    } else {
+                        loginForm.classList.add('hidden');
+                        registerForm.classList.remove('hidden');
+                    }
+                });
+            });
+
+            // Обработка формы входа
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const email = this.querySelector('input[type="email"]').value;
+                const password = this.querySelector('input[type="password"]').value;
+
+                try {
+                    const response = await fetch('https://telegram-21s5.onrender.com/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        alert('Успешная авторизация!');
+                        // Здесь можно добавить переход в чат
+                    } else {
+                        alert('Неверный email или пароль');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Произошла ошибка при авторизации');
+                }
+            });
+
+            // Обработка формы регистрации
+            registerForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const username = this.querySelector('input[type="text"]').value;
+                const email = this.querySelector('input[type="email"]').value;
+                const password = this.querySelectorAll('input[type="password"]')[0].value;
+                const confirmPassword = this.querySelectorAll('input[type="password"]')[1].value;
+
+                if (password !== confirmPassword) {
+                    alert('Пароли не совпадают');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('https://telegram-21s5.onrender.com/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ username, email, password })
+                    });
+                    
+                    const data = await response.json();
+                    if (data.success) {
+                        alert('Регистрация успешна! Теперь вы можете войти.');
+                        // Переключаемся на форму входа
+                        tabBtns[0].click();
+                    } else {
+                        alert(data.message || 'Ошибка при регистрации');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Произошла ошибка при регистрации');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
