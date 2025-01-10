@@ -49,4 +49,4 @@ def show_users():
 
 if __name__ == '__main__':
     create_local_db()
-    show_users() 
+    show_users()

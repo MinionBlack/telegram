@@ -3,22 +3,11 @@ import json
 from wsgiref.simple_server import make_server
 from pymongo import MongoClient
 
-# Подключение к MongoDB Atlas с вашими учетными данными
-MONGO_URI = "mongodb+srv://seerdro:zcdYHpdwFEBjBft@cluster0.xxxxx.mongodb.net/"
+# Подключение к MongoDB Atlas
+MONGO_URI = "mongodb+srv://lol:lollol@cluster0.7j5fh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 client = MongoClient(MONGO_URI)
 db = client.telegram_db
 users = db.users
-
-# Добавляем тестового пользователя при запуске
-def init_db():
-    if users.count_documents({'email': 'lol@lol.com'}) == 0:
-        test_user = {
-            'email': 'lol@lol.com',
-            'password': '$2y$10$J1fFAe4RHJAfivxmr7S4NeUGgt/s/vV5pWLyH9/WPX2ZSXmvJZkkm',
-            'username': 'lol'
-        }
-        users.insert_one(test_user)
-        print("Тестовый пользователь добавлен")
 
 def check_user(email, password):
     user = users.find_one({"email": email, "password": password})
@@ -79,7 +68,6 @@ def application(environ, start_response):
 app = application
 
 if __name__ == '__main__':
-    init_db()  # Инициализируем базу данных при запуске
     port = int(os.environ.get('PORT', 8000))
     with make_server('', port, app) as httpd:
         print(f'Serving on port {port}...')
