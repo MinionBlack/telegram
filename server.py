@@ -1,12 +1,23 @@
 import os
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 
-# Получаем порт из переменной окружения (Render будет её устанавливать)
-port = int(os.environ.get('PORT', 8000))
+class CORSHTTPRequestHandler(SimpleHTTPRequestHandler):
+    def end_headers(self):
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        SimpleHTTPRequestHandler.end_headers(self)
 
-# Создаём простой HTTP-сервер
-handler = SimpleHTTPRequestHandler
-server = HTTPServer(('0.0.0.0', port), handler)
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self.end_headers()
 
-print(f'Server started on port {port}')
-server.serve_forever() 
+def run_server():
+    port = int(os.environ.get('PORT', 8000))
+    server_address = ('', port)
+    httpd = HTTPServer(server_address, CORSHTTPRequestHandler)
+    print(f'Starting server on port {port}...')
+    httpd.serve_forever()
+
+if __name__ == '__main__':
+    run_server() 
