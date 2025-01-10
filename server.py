@@ -1,60 +1,86 @@
 import os
-from http.server import HTTPServer, SimpleHTTPRequestHandler
-import sqlite3
 import json
+from wsgiref.simple_server import make_server
+from pymongo import MongoClient
 
-class DatabaseHandler:
-    @staticmethod
-    def get_db_connection():
-        conn = sqlite3.connect('telegram.db')
-        conn.row_factory = sqlite3.Row
-        return conn
+# Подключение к MongoDB Atlas с вашими учетными данными
+MONGO_URI = "mongodb+srv://seerdro:zcdYHpdwFEBjBft@cluster0.xxxxx.mongodb.net/"
+client = MongoClient(MONGO_URI)
+db = client.telegram_db
+users = db.users
 
-    @staticmethod
-    def check_user(email, password):
-        conn = DatabaseHandler.get_db_connection()
-        cur = conn.cursor()
-        cur.execute('SELECT * FROM users WHERE email = ? AND password = ?', (email, password))
-        user = cur.fetchone()
-        cur.close()
-        conn.close()
-        return user is not None
+# Добавляем тестового пользователя при запуске
+def init_db():
+    if users.count_documents({'email': 'lol@lol.com'}) == 0:
+        test_user = {
+            'email': 'lol@lol.com',
+            'password': '$2y$10$J1fFAe4RHJAfivxmr7S4NeUGgt/s/vV5pWLyH9/WPX2ZSXmvJZkkm',
+            'username': 'lol'
+        }
+        users.insert_one(test_user)
+        print("Тестовый пользователь добавлен")
 
-class CustomHandler(SimpleHTTPRequestHandler):
-    def end_headers(self):
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-        SimpleHTTPRequestHandler.end_headers(self)
+def check_user(email, password):
+    user = users.find_one({"email": email, "password": password})
+    return user is not None
 
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self.end_headers()
+def application(environ, start_response):
+    if environ['REQUEST_METHOD'] == 'OPTIONS':
+        start_response('200 OK', [
+            ('Access-Control-Allow-Origin', '*'),
+            ('Access-Control-Allow-Methods', 'POST, OPTIONS'),
+            ('Access-Control-Allow-Headers', 'Content-Type'),
+            ('Content-Length', '0')
+        ])
+        return []
 
-    def do_POST(self):
-        if self.path == '/login':
-            content_length = int(self.headers['Content-Length'])
-            post_data = self.rfile.read(content_length)
-            data = json.loads(post_data.decode('utf-8'))
+    path = environ['PATH_INFO']
+    method = environ['REQUEST_METHOD']
+    
+    if method == 'POST' and path == '/login':
+        try:
+            content_length = int(environ.get('CONTENT_LENGTH', 0))
+            request_body = environ['wsgi.input'].read(content_length).decode('utf-8')
+            data = json.loads(request_body)
             
-            success = DatabaseHandler.check_user(data.get('email'), data.get('password'))
+            success = check_user(data.get('email'), data.get('password'))
             
-            self.send_response(200)
-            self.send_header('Content-type', 'application/json')
-            self.end_headers()
+            response = json.dumps({'success': success}).encode('utf-8')
             
-            response = json.dumps({'success': success})
-            self.wfile.write(response.encode('utf-8'))
-            return
+            start_response('200 OK', [
+                ('Content-Type', 'application/json'),
+                ('Access-Control-Allow-Origin', '*'),
+                ('Access-Control-Allow-Headers', 'Content-Type'),
+                ('Content-Length', str(len(response)))
+            ])
+            return [response]
+            
+        except Exception as e:
+            print(f"Error: {str(e)}")
+            response = json.dumps({
+                'success': False, 
+                'error': str(e)
+            }).encode('utf-8')
+            
+            start_response('500 Internal Server Error', [
+                ('Content-Type', 'application/json'),
+                ('Access-Control-Allow-Origin', '*'),
+                ('Content-Length', str(len(response)))
+            ])
+            return [response]
+    
+    response = b'Not Found'
+    start_response('404 Not Found', [
+        ('Content-Type', 'text/plain'),
+        ('Content-Length', str(len(response)))
+    ])
+    return [response]
 
-        return super().do_POST()
-
-def run_server():
-    port = int(os.environ.get('PORT', 8000))
-    server_address = ('', port)
-    httpd = HTTPServer(server_address, CustomHandler)
-    print(f'Starting server on port {port}...')
-    httpd.serve_forever()
+app = application
 
 if __name__ == '__main__':
-    run_server() 
+    init_db()  # Инициализируем базу данных при запуске
+    port = int(os.environ.get('PORT', 8000))
+    with make_server('', port, app) as httpd:
+        print(f'Serving on port {port}...')
+        httpd.serve_forever() 
