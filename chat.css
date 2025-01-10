@@ -1,0 +1,795 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #fff;
+    height: 100vh;
+}
+
+.chat-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* Стили для левой панели */
+.sidebar {
+    width: 350px;
+    border-right: 1px solid #e8e8e8;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    padding: 8px;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    background-color: #f0f2f5;
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+.menu-icon {
+    color: #666;
+    margin-right: 12px;
+    cursor: pointer;
+}
+
+.search-input {
+    border: none;
+    background: none;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+}
+
+.chats-list {
+    overflow-y: auto;
+    flex: 1;
+}
+
+.chat-item {
+    display: flex;
+    padding: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.chat-item:hover {
+    background-color: #f5f5f5;
+}
+
+.chat-item.active {
+    background-color: #e3f2fd;
+}
+
+.chat-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    margin-right: 12px;
+    position: relative;
+    background-color: #64B5F6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-text {
+    color: white;
+    font-weight: 500;
+}
+
+.chat-info {
+    flex: 1;
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.chat-name {
+    font-weight: 500;
+    color: #222;
+}
+
+.chat-time {
+    font-size: 12px;
+    color: #666;
+}
+
+.chat-last-message {
+    font-size: 14px;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Стили для правой панели */
+.chat-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-header {
+    padding: 16px;
+    border-bottom: 1px solid #e8e8e8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-header-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.current-chat-name {
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.online-status {
+    font-size: 13px;
+    color: #0088cc;
+}
+
+.chat-header-actions {
+    display: flex;
+    gap: 20px;
+    color: #666;
+}
+
+.chat-header-actions i {
+    cursor: pointer;
+}
+
+.messages-container {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #e6ebee;
+}
+
+.message {
+    margin-bottom: 12px;
+    display: flex;
+}
+
+.message.sent {
+    justify-content: flex-end;
+}
+
+.message-content {
+    max-width: 60%;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.message.sent .message-content {
+    background-color: #e3f2fd;
+}
+
+.message-image {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.message-time {
+    font-size: 12px;
+    color: #666;
+    float: right;
+    margin-left: 8px;
+}
+
+.file-attachment {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+}
+
+.file-attachment i {
+    font-size: 24px;
+    color: #0088cc;
+    margin-right: 12px;
+}
+
+.file-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.file-size {
+    font-size: 12px;
+    color: #666;
+}
+
+.message-input-container {
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-top: 1px solid #e8e8e8;
+}
+
+.message-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 8px;
+    font-size: 14px;
+}
+
+.input-actions {
+    display: flex;
+    gap: 16px;
+    color: #666;
+}
+
+.input-actions i {
+    cursor: pointer;
+}
+
+/* Добавляем стили для бокового меню настроек */
+.settings-sidebar {
+    position: fixed;
+    top: 0;
+    left: -300px;
+    width: 300px;
+    height: 100vh;
+    background-color: white;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    transition: left 0.3s ease;
+    z-index: 1000;
+}
+
+.settings-sidebar.active {
+    left: 0;
+}
+
+.settings-header {
+    padding: 20px;
+    border-bottom: 1px solid #e8e8e8;
+    position: relative;
+}
+
+.settings-close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    cursor: pointer;
+    color: #666;
+}
+
+.settings-header h2 {
+    margin: 0;
+    color: #333;
+}
+
+.settings-content {
+    padding: 20px;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.profile-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #64B5F6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+}
+
+.profile-info h3 {
+    margin: 0;
+    color: #333;
+}
+
+.profile-info p {
+    margin: 5px 0 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.settings-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.settings-item:hover {
+    background-color: #f5f5f5;
+}
+
+.settings-item i {
+    width: 24px;
+    margin-right: 15px;
+    color: #666;
+}
+
+.settings-item.logout {
+    margin-top: 20px;
+    color: #dc3545;
+}
+
+.settings-item.logout i {
+    color: #dc3545;
+}
+
+/* Добавляем затемнение фона при открытом меню */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+.overlay.active {
+    display: block;
+}
+
+/* Стили для языкового подменю */
+.language-item {
+    position: relative;
+}
+
+.language-item .fa-chevron-right {
+    margin-left: auto;
+    font-size: 12px;
+    color: #666;
+    transition: transform 0.3s;
+}
+
+.language-submenu {
+    position: absolute;
+    left: 100%;
+    top: 0;
+    width: 200px;
+    background: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    padding: 8px 0;
+    display: none;
+    z-index: 1001;
+}
+
+.language-item:hover .language-submenu {
+    display: block;
+}
+
+.language-option {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.language-option:hover {
+    background-color: #f5f5f5;
+}
+
+.selected-lang {
+    color: #0088cc;
+    display: none;
+}
+
+.language-option[data-selected="true"] .selected-lang {
+    display: block;
+}
+
+/* Стили для модального окна настроек внешнего вида */
+.appearance-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+.appearance-modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #e8e8e8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #333;
+}
+
+.modal-header i {
+    cursor: pointer;
+    color: #666;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.appearance-section {
+    margin-bottom: 30px;
+}
+
+.appearance-section h4 {
+    margin: 0 0 15px;
+    color: #333;
+}
+
+/* Стили для выбора темы */
+.theme-options {
+    display: flex;
+    gap: 20px;
+}
+
+.theme-option {
+    text-align: center;
+    cursor: pointer;
+}
+
+.theme-preview {
+    width: 120px;
+    height: 80px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border: 2px solid transparent;
+}
+
+.theme-option.active .theme-preview {
+    border-color: #0088cc;
+}
+
+.light-preview {
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.dark-preview {
+    background-color: #2f3136;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Стили для выбора размера */
+.size-options {
+    display: flex;
+    gap: 20px;
+}
+
+.size-option {
+    text-align: center;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.size-option.active {
+    background-color: #e3f2fd;
+}
+
+.size-preview {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.size-option[data-size="small"] .size-preview {
+    font-size: 16px;
+}
+
+.size-option[data-size="large"] .size-preview {
+    font-size: 24px;
+}
+
+/* Стили для выбора фона */
+.background-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.color-options, .image-options {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.color-option, .image-option {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.color-option.active, .image-option.active {
+    border-color: #0088cc;
+}
+
+.image-option {
+    background-size: cover;
+    background-position: center;
+}
+
+/* Стили для разных размеров сообщений */
+.message-size-small {
+    font-size: 14px;
+}
+
+.message-size-medium {
+    font-size: 16px;
+}
+
+.message-size-large {
+    font-size: 18px;
+}
+
+/* Стили для темной темы */
+.theme-dark {
+    background-color: #2f3136;
+    color: #ffffff;
+}
+
+.theme-dark .chat-main {
+    background-color: #36393f;
+}
+
+.theme-dark .message-content {
+    background-color: #40444b;
+    color: #ffffff;
+}
+
+.theme-dark .message.sent .message-content {
+    background-color: #0088cc;
+}
+
+.theme-dark .message-input-container {
+    background-color: #40444b;
+}
+
+.theme-dark .message-input {
+    color: #ffffff;
+    background-color: transparent;
+}
+
+.theme-dark .message-time {
+    color: #8e9297;
+}
+
+/* Настройки в темной теме */
+.theme-dark .settings-sidebar {
+    background-color: #2f3136;
+}
+
+.theme-dark .settings-header {
+    border-bottom-color: #202225;
+}
+
+.theme-dark .settings-header h2 {
+    color: #ffffff;
+}
+
+.theme-dark .settings-close i {
+    color: #8e9297;
+}
+
+.theme-dark .profile-info h3 {
+    color: #ffffff;
+}
+
+.theme-dark .profile-info p {
+    color: #8e9297;
+}
+
+.theme-dark .settings-item {
+    color: #ffffff;
+}
+
+.theme-dark .settings-item:hover {
+    background-color: #36393f;
+}
+
+.theme-dark .settings-item i {
+    color: #8e9297;
+}
+
+/* Модальное окно настроек в темной теме */
+.theme-dark .modal-content {
+    background-color: #2f3136;
+}
+
+.theme-dark .modal-header {
+    border-bottom-color: #202225;
+}
+
+.theme-dark .modal-header h3 {
+    color: #ffffff;
+}
+
+.theme-dark .modal-header i {
+    color: #8e9297;
+}
+
+.theme-dark .appearance-section h4 {
+    color: #ffffff;
+}
+
+.theme-dark .size-option {
+    color: #ffffff;
+}
+
+.theme-dark .size-option.active {
+    background-color: #404249;
+}
+
+/* Языковое подменю в темной теме */
+.theme-dark .language-submenu {
+    background-color: #2f3136;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.theme-dark .language-option {
+    color: #ffffff;
+}
+
+.theme-dark .language-option:hover {
+    background-color: #36393f;
+}
+
+.theme-dark .selected-lang {
+    color: #00aff4;
+}
+
+/* Обновляем стили для аватара */
+.chat-avatar, .profile-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    margin-right: 12px;
+    position: relative;
+    background-color: #64B5F6; /* Цвет для светлой темы */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Меняем цвет аватара для темной темы */
+.theme-dark .chat-avatar,
+.theme-dark .profile-avatar {
+    background-color: #40444b; /* Серый цвет для темной темы */
+}
+
+/* Обновляем стили для боковой панели в темной теме */
+.theme-dark .sidebar {
+    background-color: #2f3136;
+    border-right-color: #202225;
+}
+
+.theme-dark .chat-item {
+    background-color: transparent;
+}
+
+.theme-dark .chat-item:hover {
+    background-color: #36393f;
+}
+
+.theme-dark .chat-item.active {
+    background-color: #404249;
+}
+
+/* Стили для выбора фона чата */
+.color-options {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.color-option {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+}
+
+/* Определяем цвета для опций */
+.color-option[data-color="#e6ebee"] { background-color: #e6ebee; }
+.color-option[data-color="#f5f5f5"] { background-color: #f5f5f5; }
+.color-option[data-color="#e3f2fd"] { background-color: #e3f2fd; }
+.color-option[data-color="#e8f5e9"] { background-color: #e8f5e9; }
+
+.image-options {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.image-option {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+    background-size: cover;
+    background-position: center;
+}
+
+/* Определяем фоновые изображения для опций */
+.image-option[data-image="pattern1.png"] { background-image: url('backgrounds/pattern1.png'); }
+.image-option[data-image="pattern2.png"] { background-image: url('backgrounds/pattern2.png'); }
+.image-option[data-image="pattern3.png"] { background-image: url('backgrounds/pattern3.png'); }
+.image-option[data-image="pattern4.png"] { background-image: url('backgrounds/pattern4.png'); }
+
+.color-option.active,
+.image-option.active {
+    border-color: #0088cc;
+}
+
+/* Стили для темной темы */
+.theme-dark .color-option,
+.theme-dark .image-option {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.theme-dark .color-option.active,
+.theme-dark .image-option.active {
+    border-color: #00aff4;
+} 

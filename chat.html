@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Clone</title>
+    <link rel="stylesheet" href="chat.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="appearance-modal" id="appearanceModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Appearance Settings</h3>
+                <i class="fas fa-times" id="closeAppearance"></i>
+            </div>
+            <div class="modal-body">
+                <!-- Выбор темы -->
+                <div class="appearance-section">
+                    <h4>Theme</h4>
+                    <div class="theme-options">
+                        <div class="theme-option" data-theme="light">
+                            <div class="theme-preview light-preview"></div>
+                            <span>Light</span>
+                        </div>
+                        <div class="theme-option" data-theme="dark">
+                            <div class="theme-preview dark-preview"></div>
+                            <span>Dark</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Размер сообщений -->
+                <div class="appearance-section">
+                    <h4>Message Size</h4>
+                    <div class="size-options">
+                        <div class="size-option" data-size="small">
+                            <div class="size-preview">Aa</div>
+                            <span>Small</span>
+                        </div>
+                        <div class="size-option" data-size="medium">
+                            <div class="size-preview">Aa</div>
+                            <span>Medium</span>
+                        </div>
+                        <div class="size-option" data-size="large">
+                            <div class="size-preview">Aa</div>
+                            <span>Large</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Выбор фона чата -->
+                <div class="appearance-section">
+                    <h4>Chat Background</h4>
+                    <div class="background-options">
+                        <div class="color-options">
+                            <div class="color-option" data-color="#e6ebee" style="background-color: #e6ebee;"></div>
+                            <div class="color-option" data-color="#f5f5f5" style="background-color: #f5f5f5;"></div>
+                            <div class="color-option" data-color="#e3f2fd" style="background-color: #e3f2fd;"></div>
+                            <div class="color-option" data-color="#e8f5e9" style="background-color: #e8f5e9;"></div>
+                        </div>
+                        <div class="image-options">
+                            <div class="image-option" data-image="pattern1.png" style="background-image: url('backgrounds/pattern1.png');"></div>
+                            <div class="image-option" data-image="pattern2.png" style="background-image: url('backgrounds/pattern2.png');"></div>
+                            <div class="image-option" data-image="pattern3.png" style="background-image: url('backgrounds/pattern3.png');"></div>
+                            <div class="image-option" data-image="pattern4.png" style="background-image: url('backgrounds/pattern4.png');"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="chat-container">
+        <!-- Левая панель с чатами -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="search-container">
+                    <i class="fas fa-bars menu-icon"></i>
+                    <input type="text" placeholder="Search" class="search-input">
+                </div>
+            </div>
+            <div class="chats-list">
+                <!-- Пример чата -->
+                <div class="chat-item active">
+                    <div class="chat-avatar">
+                        <img src="default-avatar.png" alt="ES">
+                        <div class="avatar-text">ES</div>
+                    </div>
+                    <div class="chat-info">
+                        <div class="chat-header">
+                            <span class="chat-name">Eva Summer</span>
+                            <span class="chat-time">11:28 PM</span>
+                        </div>
+                        <div class="chat-last-message">
+                            Reminds me of a Chinese proverb...
+                        </div>
+                    </div>
+                </div>
+                <!-- Другие чаты -->
+            </div>
+        </div>
+
+        <!-- Правая панель с сообщениями -->
+        <div class="chat-main">
+            <div class="chat-header">
+                <div class="chat-header-info">
+                    <span class="current-chat-name">Eva Summer</span>
+                    <span class="online-status">online</span>
+                </div>
+                <div class="chat-header-actions">
+                    <i class="fas fa-search"></i>
+                    <i class="fas fa-ellipsis-v"></i>
+                </div>
+            </div>
+
+            <div class="messages-container">
+                <!-- Сообщения будут добавляться динамически -->
+            </div>
+
+            <div class="message-input-container">
+                <i class="fas fa-paperclip"></i>
+                <input type="text" placeholder="Write a message..." class="message-input">
+                <div class="input-actions">
+                    <i class="far fa-smile"></i>
+                    <i class="fas fa-microphone"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Добавляем боковое меню настроек -->
+    <div class="settings-sidebar" id="settingsSidebar">
+        <div class="settings-header">
+            <div class="settings-close">
+                <i class="fas fa-times" id="closeSettings"></i>
+            </div>
+            <h2>Settings</h2>
+        </div>
+        <div class="settings-content">
+            <div class="user-profile">
+                <div class="profile-avatar">
+                    <div class="avatar-text">ES</div>
+                </div>
+                <div class="profile-info">
+                    <h3 id="profileName">Your Name</h3>
+                    <p id="profileEmail">your.email@example.com</p>
+                </div>
+            </div>
+            <div class="settings-list">
+                <div class="settings-item">
+                    <i class="fas fa-bell"></i>
+                    <span>Notifications</span>
+                </div>
+                <div class="settings-item">
+                    <i class="fas fa-lock"></i>
+                    <span>Privacy and Security</span>
+                </div>
+                <div class="settings-item">
+                    <i class="fas fa-palette"></i>
+                    <span>Appearance</span>
+                </div>
+                <div class="settings-item language-item">
+                    <i class="fas fa-language"></i>
+                    <span>Language</span>
+                    <i class="fas fa-chevron-right"></i>
+                    
+                    <!-- Подменю выбора языка -->
+                    <div class="language-submenu">
+                        <div class="language-option" data-lang="en">
+                            <span class="lang-name">English</span>
+                            <i class="fas fa-check selected-lang"></i>
+                        </div>
+                        <div class="language-option" data-lang="ru">
+                            <span class="lang-name">Русский</span>
+                        </div>
+                        <div class="language-option" data-lang="pl">
+                            <span class="lang-name">Polski</span>
+                        </div>
+                        <div class="language-option" data-lang="zh">
+                            <span class="lang-name">中文</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-item logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Log Out</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="translations.js"></script>
+    <script src="chat.js"></script>
+    <script src="appearance.js"></script>
+</body>
+</html> 
